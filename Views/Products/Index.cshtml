@@ -1,0 +1,221 @@
+﻿@model IEnumerable<Shop.Models.Product>
+
+
+@{
+
+    ViewData["Title"] = "Index";
+    IEnumerable<Brand> Brand = ViewData["ProductBrand"] as IEnumerable<Brand>;
+    IEnumerable<Color> Color = ViewData["ProductColor"] as IEnumerable<Color>;
+    IEnumerable<Shop.Models.Type> Type = ViewData["ProductType"] as IEnumerable<Shop.Models.Type>;
+    IEnumerable<Size> Size = ViewData["ProductSize"] as IEnumerable<Size>;
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+<section class="main-container col2-left-layout bounceInUp animated">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-sm-push-3">
+                <div class="category-description std">
+                    <div class="slider-items-products">
+                        <div id="category-desc-slider" class="product-flexslider hidden-buttons">
+                            <div class="slider-items slider-width-col1 owl-carousel owl-theme">
+
+                                <!-- Item -->
+                                <div class="item">
+                                    <img alt="" src="./images/slide-img1.jpg">
+                                    <div class="cat-img-title cat-bg cat-box">
+                                    </div>
+                                </div>
+                                <!-- End Item -->
+                                <!-- Item -->
+                                <div class="item">
+                                    <img alt="" src="~/images/slide-img2.jpg">
+                                    <div class="cat-img-title cat-bg cat-box">
+                                    </div>
+                                    <!-- End Item -->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <article class="col-main">
+                    <h2 class="page-heading"> <span class="page-heading-title">Products</span> </h2>
+                    <div class="display-product-option">
+                        <div class="pager hidden-xs">
+                            @if (pager.TotalPages > 0)
+                            {
+
+                                <ul class="pages pagination justify-content-end">
+                                    @for (var pge = 1; pge <= pager.EndPage; pge++)
+                                    {
+                                        <li class="page-item" @(pge == pager.CurrentPage ? "active" : "")>
+                                            @if (@ViewBag.sort != null && ViewBag.Search != null)
+                                            {
+                                                <a class="page-link" asp-controller="Products" asp-action="Index" asp-route-sea="@ViewBag.Search" asp-route-sort="@ViewBag.sort" asp-route-pg="@pge">@pge</a>
+                                            }
+                                            else if (@ViewBag.sort != null)
+                                            {
+                                                <a class="page-link" asp-controller="Products" asp-action="Index" asp-route-sort="@ViewBag.sort" asp-route-pg="@pge">@pge</a>
+                                            }
+                                            else if (ViewBag.Search != null)
+                                            {
+                                                <a class="page-link" asp-controller="Products" asp-action="Index" asp-route-sea="@ViewBag.Search" asp-route-pg="@pge">@pge</a>
+                                            }
+                                            else
+                                            {
+                                                <a class="page-link" asp-controller="Products" asp-action="Index" asp-route-pg="@pge">@pge</a>
+
+                                            }
+
+
+                                        </li>
+                                    }
+                                </ul>
+
+                            }
+                        </div>
+                    </div>
+                    <div class="category-products">
+                        <ul class="products-grid">
+                            @if (@ViewBag.Null == null)
+                            {
+                                <h1>Not Found</h1>
+                            }
+                            else
+                            {
+                                @foreach (var item in Model)
+                                {
+
+                                    string[] arrListStr = item.ProductImage.Split(" ");
+                                    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+
+                                    <li class="item col-lg-4 col-md-4 col-sm-4 col-xs-6">
+                                        <div class="item-inner">
+                                            <div class="item-img">
+                                                <div class="item-img-info">
+                                                    <a href="/Products/Details/@item.Id" title="@item.ProductName" class="product-image"><img src="~/images/@arrListStr[0]" alt="Retis lapen casen"></a>
+                                                    <div class="box-hover">
+                                                        <ul class="add-to-links">
+
+                                                            <li><a asp-controller="AddOrder" asp-action="AddtoWishlist" asp-route-id="@item.Id" class="link-wishlist">Add to wishlist</a> </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="item-info">
+                                                <div class="info-inner">
+                                                    <div class="item-title"><a href="/Products/Details/@item.Id" title="Retis lapen casen">@item.ProductName</a> </div>
+                                                    <div class="item-content">
+
+                                                        <div class="item-price">
+                                                            <div class="price-box"><span class="regular-price"><span class="price">@String.Format(format, "{0:c0}", @item.OutPrice)</span> </span> </div>
+                                                        </div>
+                                                        <div class="action">
+                                                            <a asp-controller="AddOrder" asp-action="AddtoCart" asp-route-id="@item.Id" class="button btn-cart" type="button" title="" data-original-title="Add to Cart"><span>Add to Cart</span></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            }
+
+
+
+                        </ul>
+                    </div>
+                    <div class="toolbar">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-4">
+                            </div>
+                            <div class="col-lg-6 col-sm-7 col-md-5">
+                                <div class="pager">
+                                    @*<div class="pages">
+                                        <label>Page:</label>
+                                        <ul class="pagination">
+                                        <li><a href="#">&laquo;</a></li>
+                                        <li class="active"><a href="#">1</a></li>
+                                        <li><a href="#">2</a></li>
+                                        <li><a href="#">3</a></li>
+                                        <li><a href="#">4</a></li>
+                                        <li><a href="#">5</a></li>
+                                        <li><a href="#">&raquo;</a></li>
+                                        </ul>
+                                        </div>*@
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-12 col-md-3">
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                <!--	///*///======    End article  ========= //*/// -->
+            </div>
+            <div class="col-left sidebar col-sm-3 col-xs-12 col-sm-pull-9">
+                <aside class="col-left sidebar">
+                    <div class="side-nav-categories">
+                        <div class="block-title"> Category </div>
+                        <!--block-title-->
+                        <!-- BEGIN BOX-CATEGORY -->
+                        <div class="box-content box-category">
+                            <ul>
+
+                                @foreach (Shop.Models.Type type in Type)
+                                {
+                                    <li><a href="/Search/SearchByName/@type.Id type">@type.Tilte</a></li>
+                                }
+
+                            </ul>
+                        </div>
+                        <!--box-content box-category-->
+                    </div>
+                    <div class="hot-banner"><img alt="banner" src="./images/hot-trends-banner.jpg"></div>
+                    <div class="block block-layered-nav">
+                        <div class="block-title">Sort by Price</div>
+                        <div class="block-content">
+                            <p class="block-subtitle"></p>
+                            <dl id="narrow-by-list">
+                                <div class="w3l-range">
+                                    <ul>
+                                        @if (@ViewBag.Search != null)
+                                        {
+                                            <li class="block-items">
+                                                <a asp-action="Sort" asp-route-Search=@ViewBag.Search asp-route-sort="tangdan">Low to high</a>
+                                            </li>
+                                            <li class="block-items">
+                                                <a asp-action="Sort" asp-route-Search=@ViewBag.Search asp-route-sort="giamdan">High to low</a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="block-items">
+                                                <a asp-action="Sort" asp-route-sort="tangdan">Low to high</a>
+                                            </li>
+                                            <li class="block-items">
+                                                <a asp-action="Sort" asp-route-sort="giamdan">High to low</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+
+                            </dl>
+                        </div>
+                    </div>
+
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
